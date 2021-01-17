@@ -1,0 +1,155 @@
+<?xml version="1.0"?>
+
+<!-- Make the namespace of the robot-->
+<robot name="rrr_arm" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <!--Define constants-->
+    <xacro:property name="link_type" value="cuboidal" />
+    <xacro:property name="M_PI" value="3.14159"/>
+    <xacro:property name="mass_1" value="20" />
+    <xacro:property name="mass_2" value="5" />
+    <xacro:property name="mass_3" value="3" />
+    <xacro:property name="mass_4" value="3" />
+    <xacro:property name="radius_1" value="0.1" /> <!--base_link radius-->
+    <xacro:property name="radius_2" value="0.05" /> <!--link_1 radius-->
+    <xacro:property name="radius_3" value="0.035" /> <!--link_2 radius-->
+    <xacro:property name="radius_4" value="0.025" /> <!--link_3 radius-->
+    <xacro:property name="length_1" value="0.15" /> <!--link_1 length-->
+    <xacro:property name="length_2" value="0.5" /> <!--link_2 length-->
+    <xacro:property name="length_3" value="0.6" /> <!--link_3 length-->
+    <xacro:property name="length_4" value="0.35" /> <!--link_4 length-->
+    
+    <!--Define colors-->
+    <material name="Black">
+        <color rgba="0.0 0.0 0.0 1.0"/>
+    </material>
+    <material name="Red">
+        <color rgba="0.8 0.0 0.0 1.0"/>
+    </material>
+    <material name="Blue">
+        <color rgba="0.0 0.0 1.0 1.0"/>
+    </material>
+    <material name="LightBlue">
+        <color rgba="0.589 0.793 1.0 1.0"/>
+    </material>
+    <material name="Grey">
+        <color rgba="0.5 0.5 0.5 1.0"/>
+    </material>
+    <material name="White">
+        <color rgba="1.0 1.0 1.0 1.0"/>
+    </material>
+
+    <!-- macros for inertia -->
+    <xacro:macro name="inertial_block" params="mass length radius">
+        <inertial>
+        <origin xyz="0 0 ${length/2}" rpy="0 0 0"/>
+        <mass value="${mass}"/>
+        <inertia
+            ixx="${mass / 12.0 * (2*radius*2*radius + length*length)}" ixy="0.0" ixz="0.0"
+            iyy="${mass / 12.0 * (length*length + 2*radius*2*radius)}" iyz="0.0"
+            izz="${mass / 12.0 * (2*radius*2*radius + 2*radius*2*radius)}" />
+    </inertial>
+    </xacro:macro>
+    <!--=============================================================================-->
+    <!--base_link-->
+    <link name="base_link">
+        <visual>
+            <origin xyz="0.0 0.0 ${length_1/2.0}" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <cylinder radius="${radius_1}" length="${length_1}"/>
+            </geometry>
+            <material name="White"/>
+        </visual>
+
+        <collision>
+            <origin xyz="0.0 0.0 ${length_1/2.0}" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <cylinder radius="${radius_1}" length="${length_1}"/>
+            </geometry>>
+        </collision>
+    </link>
+
+    <joint name="joint_1" type="revolute">
+        <origin xyz="0.0 0.0 ${length_1}" rpy="0.0 0.0 0.0"/>
+        <parent link="base_link"/>
+        <child link="link_1"/>
+        <axis xyz="0.0 0.0 1"/>
+        <limit lower="0.0" upper="${M_PI * 2}" effort="300.0" velocity="1.0"/>
+    </joint>
+
+    <!--=============================================================================-->
+    <!--link_1-->
+    <link name="link_1">
+        <xacro:inertial_block mass="${mass_2}" length="${length_2}" radius="${radius_2}"/>
+        <visual>
+            <origin xyz="0.0 0.0 ${length_2/2.0}" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <cylinder radius="${radius_2}" length="${length_2}"/>
+            </geometry>
+            <material name="Grey"/>
+        </visual>
+
+        <collision>
+            <origin xyz="0.0 0.0 ${length_2/2.0}" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <cylinder radius="${radius_2}" length="${length_2}"/>
+            </geometry>>
+        </collision>
+    </link>
+
+    <joint name="joint_2" type="revolute">
+        <origin xyz="${radius_2 + radius_3} 0.0 ${length_2 - radius_2}" rpy="0.0 0.0 0.0"/>
+        <parent link="link_1"/>
+        <child link="link_2"/>
+        <axis xyz="1.0 0.0 0.0"/>
+        <limit lower="0.0" upper="${M_PI * 2}" effort="300.0" velocity="1.0"/>
+    </joint>
+
+    <!--=============================================================================-->
+    <!--link_2-->
+    <link name="link_2">
+        <xacro:inertial_block mass="${mass_3}" length="${length_3}" radius="${radius_3}"/>
+        <visual>
+            <origin xyz="0.0 0.0 ${length_3/2.0}" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <cylinder radius="${radius_3}" length="${length_3}"/>
+            </geometry>
+            <material name="Grey"/>
+        </visual>
+
+        <collision>
+            <origin xyz="0.0 0.0 ${length_3/2.0}" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <cylinder radius="${radius_3}" length="${length_3}"/>
+            </geometry>>
+        </collision>
+    </link>
+
+    <joint name="joint_3" type="revolute">
+        <origin xyz="${radius_3 + radius_4} 0.0 ${length_3 - radius_3}" rpy="0.0 0.0 0.0"/>
+        <parent link="link_2"/>
+        <child link="link_3"/>
+        <axis xyz="1.0 0.0 0.0"/>
+        <limit lower="0.0" upper="${M_PI * 2}" effort="300.0" velocity="1.0"/>
+    </joint>
+
+    <!--=============================================================================-->
+    <!--link_2-->
+    <link name="link_3">
+        <xacro:inertial_block mass="${mass_4}" length="${length_4}" radius="${radius_4}"/>
+        <visual>
+            <origin xyz="0.0 0.0 ${length_4/2.0}" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <cylinder radius="${radius_4}" length="${length_4}"/>
+            </geometry>
+            <material name="Grey"/>
+        </visual>
+
+        <collision>
+            <origin xyz="0.0 0.0 ${length_4/2.0}" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <cylinder radius="${radius_4}" length="${length_4}"/>
+            </geometry>>
+        </collision>
+    </link>
+
+</robot>
