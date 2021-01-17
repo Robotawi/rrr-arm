@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<?xml version="1.0"?>
+
+<!-- Make the namespace of the robot-->
+<robot name="rrr_arm" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<!--Define constants-->
+    <xacro:property name="link_type" value="cuboidal" />
+    <xacro:property name="PI" value="3.14159"/>
+    <xacro:property name="mass1" value="50" />
+    <xacro:property name="mass2" value="10" />
+    <xacro:property name="mass3" value="1" />
+    <xacro:property name="mass4" value="1" />
+    <xacro:property name="radius1" value="0.3" /> <!--base_link radius-->
+    <xacro:property name="radius2" value="0.1" /> <!--link_1 radius-->
+    <xacro:property name="radius3" value="0.1" /> <!--link_2 radius-->
+    <xacro:property name="radius4" value="0.1" /> <!--link_3 radius-->
+    <xacro:property name="length1" value="0.75" /> <!--link_1 length-->
+    <xacro:property name="length2" value="1.0" /> <!--link_2 length-->
+    <xacro:property name="length3" value="0.75" /> <!--link_3 length-->
+    <xacro:property name="length4" value="0.75" /> <!--link_4 length-->
+    
+    <!-- macros for inertia -->
+    <xacro:macro name="inertial_block" params="mass length radius">
+        <inertial>
+        <origin xyz="0 0 ${length/2}" rpy="0 0 0"/>
+        <mass value="${mass}"/>
+        <inertia
+            ixx="${mass / 12.0 * (2*radius*2*radius + length*length)}" ixy="0.0" ixz="0.0"
+            iyy="${mass / 12.0 * (length*length + 2*radius*2*radius)}" iyz="0.0"
+            izz="${mass2 / 12.0 * (2*radius2*2*radius2 + 2*radius2*2*radius2)}" />
+    </inertial>
+    </xacro:macro>
+
+
+    <link name="base_link">
+        <xacro:inertial_block mass="${mass1}" length="${length1}" radius="${radius1}"/>
+        <visual name="">
+            <origin xyz="0.0 0.0 ${length1/2.0}" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <cylinder radius="${radius1}" length="${length1}"/>
+            </geometry>
+            <material name="White"/>
+        </visual>
+
+        <collision>
+            <origin xyz="0.0 0.0 ${length1/2.0}" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <cylinder radius="${radius1}" length="${length1}"/>
+            </geometry>>
+        </collision>
+    </link>
+
+</robot>
