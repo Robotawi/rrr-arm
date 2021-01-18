@@ -378,3 +378,24 @@ Then, the arm with the gripper and blue arm joints
 **Notice** that the model doesn't have any tags that make possible to interface its links and joints with Gazebo. Those elements are usually included in `<gazebo>` tag and they will come in the next step.
 
 
+## 2. Interface the robot with Gazebo 
+Dynamic simulators are very important for many reasons, like the validation of the robot design, actuators sizing, and motion planning performance. 
+
+In the following part, I will add the required Gazebo tags to the xacro mode to prepare the model to be simulated in Gazebo. Then, launch files to load all the components to start the simulation in an empty Gazebo world as well as a normal world are included. The first thing is to add a `view_robot_gazebo_empty_world.launch` and `view_robot_gazebo_world.launch` file in the robot package `rrr_arm/launch` directory
+
+The following launch file starts/spawns the robot in an empty Gazebo world. 
+```
+roslaunch rrr_arm view_arm_gazebo_empty_world.launch
+```
+
+The following launch file starts/spawns the robot in Willow garage world that comes with `gazebo_ros` package.
+```
+roslaunch rrr_arm view_arm_gazebo_world.launch
+```
+
+If we spawn the robot using the above commands, gazebo simulator opens and the robot appears like fall down because there are no actuators installed at the joints yet as shown below. (On the left with no colors, and on the right after `gazebo` colors are added). Notice that Rviz and Gazebo coloring are different. 
+![](.img/../img/arm_fallen_gazebo_colorless_color_no_control.png)
+
+This is the robot in willow_garage world spawned by the second launch file.
+![](./img/arm_fallen_gazebo_world_wide_tight_color_no_control.png)
+

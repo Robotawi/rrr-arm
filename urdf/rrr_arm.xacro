@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!-- Make the namespace of the robot-->
-<robot name="rrr_arm" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="rrr_arm">
     <!--Define constants-->
     <xacro:property name="link_type" value="cuboidal" />
     <xacro:property name="M_PI" value="3.14159"/>
@@ -25,7 +25,7 @@
     <xacro:property name="length_5" value="0.15" /> <!--gripper base length-->
     <xacro:property name="length_6" value="0.07" /> <!--finger length-->
     
-    <!--Define colors-->
+    <!--Define Rviz colors-->
     <material name="Black">
         <color rgba="0.0 0.0 0.0 1.0"/>
     </material>
@@ -56,9 +56,44 @@
             izz="${mass / 12.0 * (2*radius*2*radius + 2*radius*2*radius)}" />
     </inertial>
     </xacro:macro>
+
+    <!--Define Gazebo colors-->
+    <xacro:macro name="gazebo_grey_link_color_block" params="link_name">
+    <gazebo reference="${link_name}">
+    <visual>
+      <material>
+        <ambient>0.5 0.5 0.5 1.0</ambient>
+        <diffuse>0.56666695 0.56666695 0.56666695 1.0</diffuse>
+        <specular>0.6000003 0.6000003 0.6000003 1.0</specular>
+      </material>
+    </visual>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:macro name="gazebo_blue_link_color_block" params="link_name">
+    <gazebo reference="${link_name}">
+    <visual>
+      <material>
+        <ambient>0.589 0.793 1.0 1.0</ambient>
+        <diffuse>0.56666695 0.56666695 0.56666695 1.0</diffuse>
+        <specular>0.6000003 0.6000003 0.6000003 1.0</specular>
+      </material>
+    </visual>
+    </gazebo>
+  </xacro:macro>
+  
     <!--=============================================================================-->
+    <!--world link-->
+    <link name="world"/>
+    <joint name="world_joint" type="fixed">
+        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+        <parent link="world"/>
+        <child link="base_link"/>
+    </joint>
+
     <!--base_link-->
     <link name="base_link">
+        <xacro:inertial_block mass="${mass_1}" length="${length_1}" radius="${radius_1}"/>
         <visual>
             <origin xyz="0.0 0.0 ${length_1/2.0}" rpy="0.0 0.0 0.0"/>
             <geometry>
@@ -74,6 +109,8 @@
             </geometry>>
         </collision>
     </link>
+
+    <xacro:gazebo_blue_link_color_block link_name="base_link"/>
 
     <joint name="joint_1" type="revolute">
         <origin xyz="0.0 0.0 ${length_1}" rpy="0.0 0.0 0.0"/>
@@ -102,7 +139,10 @@
             </geometry>>
         </collision>
     </link>
-
+    
+    <xacro:gazebo_grey_link_color_block link_name="link_1"/>
+    <!-- <xacro:gazebo_grey_link_color_block link_name="link_1"> -->
+    
     <link name="link_1_endlink">
         <xacro:inertial_block mass="${mass_2/3.0}" length="${2*radius_2+2*radius_3}" radius="${radius_2}"/>
         <visual>
@@ -119,7 +159,13 @@
                 <cylinder radius="${radius_2*1.1}" length="${2*radius_2+2*radius_3}"/>
             </geometry>
         </collision>
+
     </link>
+
+
+    <xacro:gazebo_blue_link_color_block link_name="link_1_endlink"/>
+
+
 
     <joint name="link_1_endjoint" type="fixed">
         <origin xyz="${-radius_2} 0.0 ${length_2 - 0.01}" rpy="0.0 ${M_PI/2.0} 0.0"/>
@@ -127,6 +173,10 @@
         <child link="link_1_endlink"/>
     </joint>
 
+    <gazebo reference="link_1_endjoint">
+        <disableFixedJointLumping>true</disableFixedJointLumping> 
+        <preserveFixedJoint>true</preserveFixedJoint>
+    </gazebo>
 
     <joint name="joint_2" type="revolute">
         <origin xyz="${radius_2 + radius_3} 0.0 ${length_2}" rpy="0.0 0.0 0.0"/>
@@ -156,6 +206,8 @@
         </collision>
     </link>
 
+    <xacro:gazebo_grey_link_color_block link_name="link_2"/>
+
     <link name="link_2_endlink">
         <xacro:inertial_block mass="${mass_3/3.0}" length="${2*radius_3+2*radius_4}" radius="${radius_3}"/>
         <visual>
@@ -174,11 +226,18 @@
         </collision>
     </link>
 
+    <xacro:gazebo_blue_link_color_block link_name="link_2_endlink"/>
+
     <joint name="link_2_endjoint" type="fixed">
         <origin xyz="${-radius_3} 0.0 ${length_3 - 0.01}" rpy="0.0 ${M_PI/2.0} 0.0"/>
         <parent link="link_2"/>
         <child link="link_2_endlink"/>
     </joint>
+
+    <gazebo reference="link_2_endjoint">
+        <disableFixedJointLumping>true</disableFixedJointLumping> 
+        <preserveFixedJoint>true</preserveFixedJoint>
+    </gazebo>
 
     <joint name="joint_3" type="revolute">
         <origin xyz="${radius_3 + radius_4} 0.0 ${length_3 - radius_3}" rpy="0.0 0.0 0.0"/>
@@ -208,6 +267,8 @@
         </collision>
     </link>
 
+    <xacro:gazebo_grey_link_color_block link_name="link_3"/>
+
     <joint name="joint_4" type="revolute">
         <origin xyz="0.0 0.0 ${length_4}" rpy="0.0 0.0 0.0"/>
         <parent link="link_3"/>
@@ -235,6 +296,8 @@
             </geometry>>
         </collision>
     </link>
+
+    <xacro:gazebo_grey_link_color_block link_name="link_4"/>
 
     <joint name="gripper_joint_1" type="prismatic">
         <origin xyz="0.0 0.0 ${radius_5 + length_6/2.0}" rpy="0.0 0.0 0.0"/>
@@ -277,6 +340,8 @@
         </collision>
     </link>
 
+    <xacro:gazebo_grey_link_color_block link_name="gripper_link_1"/>
+
     <!--=============================================================================-->
     <!--gripper_link_2-->
     <link name="gripper_link_2">
@@ -297,6 +362,7 @@
         </collision>
     </link>
 
+    <xacro:gazebo_grey_link_color_block link_name="gripper_link_2"/>
     <!--=============================================================================-->
     <!--gripper_frame_cp-->
     <link name="gripper_frame_cp">
