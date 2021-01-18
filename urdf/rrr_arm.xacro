@@ -11,19 +11,19 @@
     <xacro:property name="mass_4" value="3" />
     <xacro:property name="mass_5" value="1" />
     <xacro:property name="mass_6" value="0.2" />
-    <xacro:property name="radius_1" value="0.1" /> <!--base_link radius-->
+    <xacro:property name="radius_1" value="0.1" />  <!--base_link radius-->
     <xacro:property name="radius_2" value="0.05" /> <!--link_1 radius-->
-    <xacro:property name="radius_3" value="0.035" /> <!--link_2 radius-->
-    <xacro:property name="radius_4" value="0.025" /> <!--link_3 radius-->
-    <xacro:property name="radius_5" value="0.025" /> <!--link_3 radius-->
-    <xacro:property name="radius_6" value="0.02" /> <!--link_3 radius-->
+    <xacro:property name="radius_3" value="0.035" /><!--link_2 radius-->
+    <xacro:property name="radius_4" value="0.025" /><!--link_3 radius-->
+    <xacro:property name="radius_5" value="0.025" /><!--gripper base redius/width-->
+    <xacro:property name="radius_6" value="0.02" /> <!--finger radius/length-->
 
-    <xacro:property name="length_1" value="0.15" /> <!--link_1 length-->
-    <xacro:property name="length_2" value="0.4" /> <!--link_2 length-->
-    <xacro:property name="length_3" value="0.5" /> <!--link_3 length-->
-    <xacro:property name="length_4" value="0.35" /> <!--link_4 length-->
-    <xacro:property name="length_5" value="0.15" /> <!--link_4 length-->
-    <xacro:property name="length_6" value="0.07" /> <!--link_4 length-->
+    <xacro:property name="length_1" value="0.15" /> <!--base_link length-->
+    <xacro:property name="length_2" value="0.4" />  <!--link_1 length-->
+    <xacro:property name="length_3" value="0.5" />  <!--link_2 length-->
+    <xacro:property name="length_4" value="0.3" /> <!--link_3 length-->
+    <xacro:property name="length_5" value="0.15" /> <!--gripper base length-->
+    <xacro:property name="length_6" value="0.07" /> <!--finger length-->
     
     <!--Define colors-->
     <material name="Black">
@@ -64,7 +64,7 @@
             <geometry>
                 <cylinder radius="${radius_1}" length="${length_1}"/>
             </geometry>
-            <material name="White"/>
+            <material name="LightBlue"/>
         </visual>
 
         <collision>
@@ -103,8 +103,33 @@
         </collision>
     </link>
 
+    <link name="link_1_endlink">
+        <xacro:inertial_block mass="${mass_2/3.0}" length="${2*radius_2+2*radius_3}" radius="${radius_2}"/>
+        <visual>
+            <origin xyz="0.0 0.0 ${(2*radius_2+2*radius_3)/2.0}" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <cylinder radius="${radius_2*1.1}" length="${2*radius_2+2*radius_3}"/>
+            </geometry>
+            <material name="LightBlue"/>
+        </visual>
+
+        <collision>
+            <origin xyz="0.0 0.0 ${(2*radius_2+2*radius_3)/2.0}" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <cylinder radius="${radius_2*1.1}" length="${2*radius_2+2*radius_3}"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="link_1_endjoint" type="fixed">
+        <origin xyz="${-radius_2} 0.0 ${length_2 - 0.01}" rpy="0.0 ${M_PI/2.0} 0.0"/>
+        <parent link="link_1"/>
+        <child link="link_1_endlink"/>
+    </joint>
+
+
     <joint name="joint_2" type="revolute">
-        <origin xyz="${radius_2 + radius_3} 0.0 ${length_2 - radius_2}" rpy="0.0 0.0 0.0"/>
+        <origin xyz="${radius_2 + radius_3} 0.0 ${length_2}" rpy="0.0 0.0 0.0"/>
         <parent link="link_1"/>
         <child link="link_2"/>
         <axis xyz="1.0 0.0 0.0"/>
@@ -130,6 +155,30 @@
             </geometry>>
         </collision>
     </link>
+
+    <link name="link_2_endlink">
+        <xacro:inertial_block mass="${mass_3/3.0}" length="${2*radius_3+2*radius_4}" radius="${radius_3}"/>
+        <visual>
+            <origin xyz="0.0 0.0 ${(2*radius_3+2*radius_4)/2.0}" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <cylinder radius="${radius_3*1.1}" length="${2*radius_3+2*radius_4}"/>
+            </geometry>
+            <material name="LightBlue"/>
+        </visual>
+
+        <collision>
+            <origin xyz="0.0 0.0 ${(2*radius_3+2*radius_4)/2.0}" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <cylinder radius="${radius_3*1.1}" length="${2*radius_3+2*radius_4}"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="link_2_endjoint" type="fixed">
+        <origin xyz="${-radius_3} 0.0 ${length_3 - 0.01}" rpy="0.0 ${M_PI/2.0} 0.0"/>
+        <parent link="link_2"/>
+        <child link="link_2_endlink"/>
+    </joint>
 
     <joint name="joint_3" type="revolute">
         <origin xyz="${radius_3 + radius_4} 0.0 ${length_3 - radius_3}" rpy="0.0 0.0 0.0"/>
