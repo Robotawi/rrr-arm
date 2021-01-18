@@ -10,9 +10,7 @@ git clone https://github.com/Robotawi/rrr-arm.git
 ```
 Then, build the workspace and the package is ready.
 
-I will list some steps of building the arm to help as well as how to visualize it
-
-1. Build the xacro model and visualize it in Rviz.
+I will explain how to make each step as well as how to use the package at every point.
 
 ## 1. Robot visualization in Rviz
 This is a must have skill to be able to make the model in the first place.  
