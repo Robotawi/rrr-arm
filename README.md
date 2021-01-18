@@ -1,5 +1,5 @@
 # RRR-robot-arm_ROS
-ROS package for 3 DOF Revolute-Revolute-Revolute robot arm built from scratch. The aim of the package is to explain to fellow roboticsts about the flow from the arms modeling to using MoveIt for motion planning.
+ROS package for 3 DOF Revolute-Revolute-Revolute robot arm built from scratch. The aim of the package is to explain to fellow roboticists about the flow from the arms modeling to using MoveIt for motion planning.
 
 In this package the arm and its gripper are build from scratch using URDF/xacro model. After building the model, the launch files required to visualize it in Rviz, and Gazebo are made. In the next step, MoveIt configuration package for the arm is created. The interface of the MoveIt package with Gazebo for motion planning is also done. 
 
@@ -44,8 +44,7 @@ Building an arm from scratch is done in an iterative way. Build a link, visualiz
 ![](./img/model_build_steps_rviz.png)
 
 Then, the arm with the gripper (the result of launching the above file) is the following
-![](./img/arm_with_gripper_rviz.png)
-
+![](./img/arm_with_gripper_and_linkend_rviz.png)
 
 Notice that at this moment, we just have a robot that is being **animated**. It can't be used in dynamics simulators like Gazebo. The xacro model being launched by the above launch file is the following.
 
@@ -63,19 +62,19 @@ Notice that at this moment, we just have a robot that is being **animated**. It 
     <xacro:property name="mass_4" value="3" />
     <xacro:property name="mass_5" value="1" />
     <xacro:property name="mass_6" value="0.2" />
-    <xacro:property name="radius_1" value="0.1" /> <!--base_link radius-->
+    <xacro:property name="radius_1" value="0.1" />  <!--base_link radius-->
     <xacro:property name="radius_2" value="0.05" /> <!--link_1 radius-->
-    <xacro:property name="radius_3" value="0.035" /> <!--link_2 radius-->
-    <xacro:property name="radius_4" value="0.025" /> <!--link_3 radius-->
-    <xacro:property name="radius_5" value="0.025" /> <!--link_3 radius-->
-    <xacro:property name="radius_6" value="0.02" /> <!--link_3 radius-->
+    <xacro:property name="radius_3" value="0.035" /><!--link_2 radius-->
+    <xacro:property name="radius_4" value="0.025" /><!--link_3 radius-->
+    <xacro:property name="radius_5" value="0.025" /><!--gripper base redius/width-->
+    <xacro:property name="radius_6" value="0.02" /> <!--finger radius/length-->
 
-    <xacro:property name="length_1" value="0.15" /> <!--link_1 length-->
-    <xacro:property name="length_2" value="0.4" /> <!--link_2 length-->
-    <xacro:property name="length_3" value="0.5" /> <!--link_3 length-->
-    <xacro:property name="length_4" value="0.35" /> <!--link_4 length-->
-    <xacro:property name="length_5" value="0.15" /> <!--link_4 length-->
-    <xacro:property name="length_6" value="0.07" /> <!--link_4 length-->
+    <xacro:property name="length_1" value="0.15" /> <!--base_link length-->
+    <xacro:property name="length_2" value="0.4" />  <!--link_1 length-->
+    <xacro:property name="length_3" value="0.5" />  <!--link_2 length-->
+    <xacro:property name="length_4" value="0.3" /> <!--link_3 length-->
+    <xacro:property name="length_5" value="0.15" /> <!--gripper base length-->
+    <xacro:property name="length_6" value="0.07" /> <!--finger length-->
     
     <!--Define colors-->
     <material name="Black">
@@ -116,7 +115,7 @@ Notice that at this moment, we just have a robot that is being **animated**. It 
             <geometry>
                 <cylinder radius="${radius_1}" length="${length_1}"/>
             </geometry>
-            <material name="White"/>
+            <material name="LightBlue"/>
         </visual>
 
         <collision>
@@ -155,8 +154,33 @@ Notice that at this moment, we just have a robot that is being **animated**. It 
         </collision>
     </link>
 
+    <link name="link_1_endlink">
+        <xacro:inertial_block mass="${mass_2/3.0}" length="${2*radius_2+2*radius_3}" radius="${radius_2}"/>
+        <visual>
+            <origin xyz="0.0 0.0 ${(2*radius_2+2*radius_3)/2.0}" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <cylinder radius="${radius_2*1.1}" length="${2*radius_2+2*radius_3}"/>
+            </geometry>
+            <material name="LightBlue"/>
+        </visual>
+
+        <collision>
+            <origin xyz="0.0 0.0 ${(2*radius_2+2*radius_3)/2.0}" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <cylinder radius="${radius_2*1.1}" length="${2*radius_2+2*radius_3}"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="link_1_endjoint" type="fixed">
+        <origin xyz="${-radius_2} 0.0 ${length_2 - 0.01}" rpy="0.0 ${M_PI/2.0} 0.0"/>
+        <parent link="link_1"/>
+        <child link="link_1_endlink"/>
+    </joint>
+
+
     <joint name="joint_2" type="revolute">
-        <origin xyz="${radius_2 + radius_3} 0.0 ${length_2 - radius_2}" rpy="0.0 0.0 0.0"/>
+        <origin xyz="${radius_2 + radius_3} 0.0 ${length_2}" rpy="0.0 0.0 0.0"/>
         <parent link="link_1"/>
         <child link="link_2"/>
         <axis xyz="1.0 0.0 0.0"/>
@@ -182,6 +206,30 @@ Notice that at this moment, we just have a robot that is being **animated**. It 
             </geometry>>
         </collision>
     </link>
+
+    <link name="link_2_endlink">
+        <xacro:inertial_block mass="${mass_3/3.0}" length="${2*radius_3+2*radius_4}" radius="${radius_3}"/>
+        <visual>
+            <origin xyz="0.0 0.0 ${(2*radius_3+2*radius_4)/2.0}" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <cylinder radius="${radius_3*1.1}" length="${2*radius_3+2*radius_4}"/>
+            </geometry>
+            <material name="LightBlue"/>
+        </visual>
+
+        <collision>
+            <origin xyz="0.0 0.0 ${(2*radius_3+2*radius_4)/2.0}" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <cylinder radius="${radius_3*1.1}" length="${2*radius_3+2*radius_4}"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="link_2_endjoint" type="fixed">
+        <origin xyz="${-radius_3} 0.0 ${length_3 - 0.01}" rpy="0.0 ${M_PI/2.0} 0.0"/>
+        <parent link="link_2"/>
+        <child link="link_2_endlink"/>
+    </joint>
 
     <joint name="joint_3" type="revolute">
         <origin xyz="${radius_3 + radius_4} 0.0 ${length_3 - radius_3}" rpy="0.0 0.0 0.0"/>
@@ -324,4 +372,9 @@ Notice that at this moment, we just have a robot that is being **animated**. It 
 
 ```
 
-Notice that the model doesn't have any tags that make possible to interface its links and joints with Gazebo. Those elements are usually included in `<gazebo>` tag and they will come in the next step.
+Then, the arm with the gripper and blue arm joints
+![](./img/arm_with_gripper_and_linkend_rviz.png)
+
+**Notice** that the model doesn't have any tags that make possible to interface its links and joints with Gazebo. Those elements are usually included in `<gazebo>` tag and they will come in the next step.
+
+
