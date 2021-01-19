@@ -463,24 +463,20 @@ rostopic list
 ```
 As we can the the command topic are being published. This is the way how all the interesting stuff, like seeing the planned motion, will take place. We can also publish to those topic manually as follows.
 
+![](./img/open_gripper_picknplace.gif)
+
 Open the gripper
 ```
-rostopic pub /rrr_arm/joint5_position_controller/command  std_msgs/Float64 "data: 0.03"
-
-rostopic pub /rrr_arm/joint6_position_controller/command  std_msgs/Float64 "data: -0.03"
+rostopic pub /rrr_arm/joint5_position_controller/command  std_msgs/Float64 "data: 0.03" & rostopic pub /rrr_arm/joint6_position_controller/command  std_msgs/Float64 "data: -0.03"
 ```
+Close the gripper
+```
+rostopic pub /rrr_arm/joint5_position_controller/command  std_msgs/Float64 "data: 0.03" & rostopic pub /rrr_arm/joint6_position_controller/command  std_msgs/Float64 "data: -0.03"
+```
+
 Move the arm
 ```
-rostopic pub /rrr_arm/joint1_position_controller/command  std_msgs/Float64 "data: 1.0"
-
-rostopic pub /rrr_arm/joint2_position_controller/command  std_msgs/Float64 "data: 1.0"
-
-rostopic pub /rrr_arm/joint3_position_controller/command  std_msgs/Float64 "data: 1.5"
-
-rostopic pub /rrr_arm/joint4_position_controller/command std_msgs/Float64 "data: 1.5"
+rostopic pub /rrr_arm/joint1_position_controller/command  std_msgs/Float64 "data: 1.0" & rostopic pub /rrr_arm/joint2_position_controller/command  std_msgs/Float64 "data: 1.0" & rostopic pub /rrr_arm/joint3_position_controller/command  std_msgs/Float64 "data: 1.5" & rostopic pub /rrr_arm/joint4_position_controller/command std_msgs/Float64 "data: 1.5"
 ```
-![](./img/arm_position_controlled_world.png)
 
 The interface with Gazebo is done at this point. The robot is spawned with all the controllers and their related command topics and we publish to them from the command line or write our nodes to publish on the command topics.
-
-
