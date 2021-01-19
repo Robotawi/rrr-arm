@@ -1,0 +1,53 @@
+rrr_arm:
+  # Publish all joint states
+  joint_state_controller:
+    type: joint_state_controller/JointStateController
+    publish_rate: 50  
+  
+  # Position Controllers
+  joint1_position_controller:
+    type: position_controllers/JointPositionController
+    joint: joint_1
+  joint2_position_controller:
+    type: position_controllers/JointPositionController
+    joint: joint_2
+  joint3_position_controller:
+    type: position_controllers/JointPositionController
+    joint: joint_3
+  joint4_position_controller:
+    type: position_controllers/JointPositionController
+    joint: joint_4
+  joint5_position_controller:
+    type: position_controllers/JointPositionController
+    joint: gripper_joint_1
+  joint6_position_controller:
+    type: position_controllers/JointPositionController
+    joint: gripper_joint_2
+  
+  # PID Controllers params
+  # gazebo_ros_control:
+  #     pid_gains:
+  #       joint_1:
+  #         p: 100.0
+  #         i: 0.01
+  #         d: 10.0
+  #       joint_2:
+  #         p: 100.0
+  #         i: 0.01
+  #         d: 10.0
+  #       joint_3:
+  #         p: 100.0
+  #         i: 0.01
+  #         d: 10.0
+  #       joint_4:
+  #         p: 100.0
+  #         i: 0.01
+  #         d: 10.0
+  #       gripper_joint_1:
+  #         p: 100.0
+  #         i: 0.01
+  #         d: 10.0
+  #       gripper_joint_2:
+  #         p: 100.0
+  #         i: 0.01
+  #         d: 10.0
