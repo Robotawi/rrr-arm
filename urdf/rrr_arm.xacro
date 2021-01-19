@@ -57,6 +57,20 @@
     </inertial>
     </xacro:macro>
 
+    <!-- macros for transmission -->
+    <xacro:macro name="transmission_block" params="joint_name">
+	  <transmission name="tran1">
+	    <type>transmission_interface/SimpleTransmission</type>
+	    <joint name="${joint_name}">
+	      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+	    </joint>
+	    <actuator name="motor1">
+	      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+	      <mechanicalReduction>1</mechanicalReduction>
+	    </actuator>
+	  </transmission>
+   </xacro:macro>
+
     <!--Define Gazebo colors-->
     <xacro:macro name="gazebo_grey_link_color_block" params="link_name">
     <gazebo reference="${link_name}">
@@ -382,5 +396,20 @@
             </geometry>
         </collision>
     </link>
+
+    <!-- Transmissions for ros control -->
+    <xacro:transmission_block joint_name="joint_1"/>
+    <xacro:transmission_block joint_name="joint_2"/>
+    <xacro:transmission_block joint_name="joint_3"/>
+    <xacro:transmission_block joint_name="joint_4"/>
+    <xacro:transmission_block joint_name="gripper_joint_1"/>
+    <xacro:transmission_block joint_name="gripper_joint_2"/>
+
+    <!-- ros_control plugin -->
+    <gazebo>
+        <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+        <robotNamespace>/rrr_arm</robotNamespace>
+        </plugin>
+    </gazebo>
 
 </robot>
