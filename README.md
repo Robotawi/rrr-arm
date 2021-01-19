@@ -479,7 +479,7 @@ rostopic pub /rrr_arm/joint3_position_controller/command  std_msgs/Float64 "data
 
 rostopic pub /rrr_arm/joint4_position_controller/command std_msgs/Float64 "data: 1.5"
 ```
-![](./img/arm_position_controlled.png)
+![](./img/arm_position_controlled_world.png)
 
 The interface with Gazebo is done at this point. The robot is spawned with all the controllers and their related command topics and we publish to them from the command line or write our nodes to publish on the command topics.
 
