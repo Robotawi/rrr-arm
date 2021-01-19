@@ -47,6 +47,9 @@ Then, the arm with the gripper (the result of launching the above file) is the f
 ![](./img/arm_with_gripper_and_linkend_rviz.png)
 
 Notice that at this moment, we just have a robot that is being **animated**. It can't be used in dynamics simulators like Gazebo. The xacro model being launched by the above launch file is the following.
+___
+<details><summary>CLICK here to see the details of the xacro file contents</summary>
+<p>
 
 ```
 <?xml version="1.0"?>
@@ -372,6 +375,10 @@ Notice that at this moment, we just have a robot that is being **animated**. It 
 
 ```
 
+</p>
+</details>
+
+___
 **Notice** that the model doesn't have any tags that make possible to interface its links and joints with Gazebo. Those elements are usually included in `<gazebo>` tag and they will come in the next step.
 
 
