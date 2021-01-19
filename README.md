@@ -372,9 +372,6 @@ Notice that at this moment, we just have a robot that is being **animated**. It 
 
 ```
 
-Then, the arm with the gripper and blue arm joints
-![](./img/arm_with_gripper_and_linkend_rviz.png)
-
 **Notice** that the model doesn't have any tags that make possible to interface its links and joints with Gazebo. Those elements are usually included in `<gazebo>` tag and they will come in the next step.
 
 
@@ -398,4 +395,92 @@ If we spawn the robot using the above commands, gazebo simulator opens and the r
 
 This is the robot in willow_garage world spawned by the second launch file.
 ![](./img/arm_fallen_gazebo_world_wide_tight_color_no_control.png)
+
+### Adding actuators and controllers to the robot model
+The reason why the arm fall down in the previous images is that there is still no controlled actuators that can keep it upright at a specific pose. In the following, I will add the actuators which are represented by `transmission` elements/tags in the xacro model. Then, configure `ros_controllers` that will provide the enough effort to balance the arm.
+
+**Notice** that the simplicity of interfacing actuators/controllers makes Gazebo the best simulator to start with your robot arm compared to other multi-body dynamic (MBD) simulators, like ADAMS for example. In case of using ADAMS, we must build controllers from scratch using ADAMS or MATLAB interface.
+
+Running the following 
+**Actuators** are added to the xacro in for of transmissions as follows
+```
+<!-- macros for transmission -->
+    <xacro:macro name="transmission_block" params="joint_name">
+	  <transmission name="tran1">
+	    <type>transmission_interface/SimpleTransmission</type>
+	    <joint name="${joint_name}">
+	      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+	    </joint>
+	    <actuator name="motor1">
+	      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+	      <mechanicalReduction>1</mechanicalReduction>
+	    </actuator>
+	  </transmission>
+   </xacro:macro>
+```
+
+Then a corresponding controller should be added to the `rrr_arm/config`. The above launch files starts four components at the same time. 
+1. Include a launch file that launches a robot in a world/empty world.
+2. Load the controller config .yaml file that we write for our robot.
+3. Spawn the robot controller.
+4. Start robot start publisher node.
+
+Now, we can see the robot spawned upright either in the empty world or the willow garage world with the following commands 
+Spawn in an empty world
+```
+roslaunch rrr_arm view_arm_gazebo_control_empty_world.launch 
+
+```
+
+Spawn in Willow Garage world 
+```
+roslaunch rrr_arm view_arm_gazebo_control_world.launch 
+```
+![](./img/arms_upright_gazebo_color_control.png)
+
+If everything goes right, we should see the following topics when we run `rostopic list`
+```
+rostopic list
+
+/clock
+/gazebo/link_states
+/gazebo/model_states
+/gazebo/parameter_descriptions
+/gazebo/parameter_updates
+/gazebo/set_link_state
+/gazebo/set_model_state
+/rosout
+/rosout_agg
+/rrr_arm/joint1_position_controller/command
+/rrr_arm/joint2_position_controller/command
+/rrr_arm/joint3_position_controller/command
+/rrr_arm/joint4_position_controller/command
+/rrr_arm/joint5_position_controller/command
+/rrr_arm/joint6_position_controller/command
+/rrr_arm/joint_states
+/tf
+/tf_static
+```
+As we can the the command topic are being published. This is the way how all the interesting stuff, like seeing the planned motion, will take place. We can also publish to those topic manually as follows.
+
+Open the gripper
+```
+rostopic pub /rrr_arm/joint5_position_controller/command  std_msgs/Float64 "data: 0.03"
+
+rostopic pub /rrr_arm/joint6_position_controller/command  std_msgs/Float64 "data: -0.03"
+```
+Move the arm
+```
+rostopic pub /rrr_arm/joint1_position_controller/command  std_msgs/Float64 "data: 1.0"
+
+rostopic pub /rrr_arm/joint2_position_controller/command  std_msgs/Float64 "data: 1.0"
+
+rostopic pub /rrr_arm/joint3_position_controller/command  std_msgs/Float64 "data: 1.5"
+
+rostopic pub /rrr_arm/joint4_position_controller/command std_msgs/Float64 "data: 1.5"
+```
+![](./img/arm_position_controlled.png)
+
+The interface with Gazebo is done at this point. The robot is spawned with all the controllers and their related command topics and we publish to them from the command line or write our nodes to publish on the command topics.
+
 
