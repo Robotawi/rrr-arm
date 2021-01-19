@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<launch>
+
+  <!-- Optional: World File (if not used, then the arg world_name in the next step should not be used) -->
+  <!-- My world -->
+  <!--<arg name="world_file" default="$(find rrr_arm)/worlds/myhouse.world"/>-->
+
+  <!-- Willo Garage world from gazebo_ros package -->
+  <arg name="world_file" value="worlds/willowgarage.world"/> <!-- Note: the world_name is with respect to GAZEBO_RESOURCE_PATH environmental variable -->
+
+
+  <!-- Launch empty Gazebo world (notice the world_name arg if the above world_file is loaded) -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch"> 
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="debug" value="false"/>
+    <arg name="world_name" value="$(arg world_file)"/>
+  </include>
+
+  <!-- Optional: Robot pose (if used, it should be before the Spawning the robot)-->
+  <arg name="x" default="0"/>
+  <arg name="y" default="0"/>
+  <arg name="z" default="0"/>
+  <arg name="roll" default="0"/>
+  <arg name="pitch" default="0"/>
+  <arg name="yaw" default="0"/>
+
+
+  <!--Optional: Gazebo simulator options-->
+	<!-- these are the arguments you can pass this launch file, for example paused:=true -->
+	<arg name="paused" default="false"/>
+	<arg name="use_sim_time" default="true"/>
+	<arg name="gui" default="true"/>
+	<arg name="headless" default="false"/>
+	<arg name="debug" default="false"/>
+
+  <!-- Find my robot Description-->
+  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find rrr_arm)/urdf/rrr_arm.xacro'"/>
+
+  <!-- Spawn The Robot using the robot_description param-->
+  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" 
+        args="-urdf -param robot_description -model rrr_arm 
+              -x $(arg x) -y $(arg y) -z $(arg z)
+              -R $(arg roll) -P $(arg pitch) -Y $(arg yaw)"/>
+
+</launch>
+
