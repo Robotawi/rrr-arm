@@ -41,7 +41,7 @@ The contents of the launch file are as follows. The four components are exactly 
 </launch>
 ```
 Building an arm from scratch is done in an iterative way. Build a link, visualize it, connect to a joint, and visualize again. It is very easy to make mistakes when making URDF/xacro models. The following is an example of the steps of building the arm
-![](./img/model_build_steps_rviz.png)
+![](./img/model_build_steps_rviz_fix.png)
 
 Then, the arm with the gripper (the result of launching the above file) is the following
 ![](./img/arm_with_gripper_and_linkend_rviz.png)
