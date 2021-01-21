@@ -1,7 +1,7 @@
 # RRR-robot-arm_ROS
 ROS package for 3 DOF Revolute-Revolute-Revolute robot arm built from scratch. The aim of the package is to explain to fellow roboticists about the flow from the arms modeling to using MoveIt for motion planning.
 
-In this package the arm and its gripper are build from scratch using URDF/xacro model. After building the model, the launch files required to visualize it in Rviz, and Gazebo are made. In the next step, MoveIt configuration package for the arm is created. The interface of the MoveIt package with Gazebo for motion planning is also done. 
+In this package the arm and its gripper are build from scratch using URDF/xacro model. After building the model, the launch files required to visualize it in Rviz, and Gazebo are made. In the next step, MoveIt configuration package for the arm is created [here](https://github.com/Robotawi/rrr_arm_config). The interface of the MoveIt package with Gazebo for motion planning is also done.
 
 
 To use this package, clone it to your ROS `workspace/src` directory as follows:
