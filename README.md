@@ -1,4 +1,4 @@
-# RRR-robot-arm_ROS
+# RRR-robot-arm visualization in Rviz & Simulation in Gazebo
 ROS package for 3 DOF Revolute-Revolute-Revolute robot arm built from scratch. The aim of the package is to explain to fellow roboticists about the flow from the arms modeling to using MoveIt for motion planning.
 
 In this package the arm and its gripper are build from scratch using URDF/xacro model. After building the model, the launch files required to visualize it in Rviz, and Gazebo are made. In the next step, MoveIt configuration package for the arm is created [here](https://github.com/Robotawi/rrr_arm_config). The interface of the MoveIt package with Gazebo for motion planning is also done.
@@ -12,7 +12,7 @@ Then, build the workspace and the package is ready.
 
 I will explain how to make each step as well as how to use the package at every point.
 
-## 1. Robot visualization in Rviz
+## 1. Visualizing the robot in Rviz
 This is a must have skill to be able to make the model in the first place.  
 
 To start the arm in Rviz, use the following command
@@ -382,7 +382,7 @@ ___
 **Notice** that the model doesn't have any tags that make possible to interface its links and joints with Gazebo. Those elements are usually included in `<gazebo>` tag and they will come in the next step.
 
 
-## 2. Interface the robot with Gazebo 
+## 2. Simulating the robot in Gazebo 
 Dynamic simulators are very important for many reasons, like the validation of the robot design, actuators sizing, and motion planning performance. 
 
 In the following part, I will add the required Gazebo tags to the xacro mode to prepare the model to be simulated in Gazebo. Then, launch files to load all the components to start the simulation in an empty Gazebo world as well as a normal world are included. The first thing is to add a `view_robot_gazebo_empty_world.launch` and `view_robot_gazebo_world.launch` file in the robot package `rrr_arm/launch` directory
@@ -486,4 +486,40 @@ Move the arm
 rostopic pub /rrr_arm/joint1_position_controller/command  std_msgs/Float64 "data: 1.0" & rostopic pub /rrr_arm/joint2_position_controller/command  std_msgs/Float64 "data: 1.0" & rostopic pub /rrr_arm/joint3_position_controller/command  std_msgs/Float64 "data: 1.5" & rostopic pub /rrr_arm/joint4_position_controller/command std_msgs/Float64 "data: 1.5"
 ```
 
+**Summary of the included launch files**
+
+| launch file name | Functionality | Comments |
+| ------------- | ------------- | ------------- |
+| view_arm.launch  | View arm in Rviz  | No control or physics, good for visualizations and motion planning  |
+| view_arm_gazebo_empty_world.launch  | Spawn arm in an empty world **(without control)** | Do not let the straight arm deceive you.\ There is no control, but it works in this way when `gazebo_ros_control` plugin is included in the xacro, and there are transmission tags/elements in the model. You can be sure with `rostopic list`, which shows control topics or not  |
+| view_arm_gazebo_world.launch  | Spawn arm in Willow Garage world **(without control)** | Directly above comment applies here  |
+| roslaunch rrr_arm view_arm_gazebo_control_empty_world.launch  | Spawn arm in an empty world **(with control)**. We can control robot joints using ROS controllers in Gazebo  | In this case, the arm is straight because the position controller is spawned. You can be sure with `rostopic list`, which shows control topics of position controllers  |
+| roslaunch rrr_arm view_arm_gazebo_control_world.launch  | Spawn arm in Willow Garage world **(with control)**. Directly above functionality is also applicable here.  | Directly above comment applies here  |
+
+
+**Interesting errors**
+
+1. The following error happens when the transmission elements are not available in the xacro model, but we are trying to launching a controller. There is a similar error for every joint, but do not panic. They work all together, and fail all together! 
+
+```
+[ERROR] [1636359270.302453096, 0.331000000]: Exception thrown while initializing controller 'joint1_position_controller'.
+Could not find resource 'joint_1' in 'hardware_interface::PositionJointInterface'.
+[ERROR] [1636359270.302539096, 0.331000000]: Initializing controller 'joint1_position_controller' failed
+[ERROR] [1636359271.303915, 1.291000]: Failed to load joint1_position_controller
+```
+The clearest part that tells us about the missing transmissions is because the error message mentions `'hardware_interface'`, which is set by the transmissions. In fact, `gazebo_ros_control` plugin in the simulation model to parse the transmission tags and assign appropriate hardware interfaces and control manager.
+
+2. 
+
 The interface with Gazebo is done at this point. The robot is spawned with all the controllers and their related command topics and we publish to them from the command line or write our nodes to publish on the command topics.
+
+**Important notes about ROS COntrol**
+
+1. To move each joint, we need to assign an ROS controller. For each joint, we need to attach a controller that is compatible with the hardware interface mentioned inside the transmission tags.
+
+Notes to myself for improving this repo:
+1. The following launch files can be separated to another repo with for another tutorial:
+    - rrr_arm_gazebo_states.launch
+    - rrr_arm_trajectory_controller.launch
+    - rrr_arm_bringup_moveit.launch
+2. Only the `rrr_arm_gazebo_control.yaml` file is important for letting the arm move in Gazebo. It loads and spawns the joint state controllers and the joint position controllers. The other three control config files can be taken to another repo/tutorial not to be confusing. 
