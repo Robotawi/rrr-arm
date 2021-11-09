@@ -1,4 +1,18 @@
 <launch>
+  <!-- This launch file starts
+  1. view_arm_gazebo_empty_world.launch, which does the following
+      1. robot description
+      2. empty world
+      3. robot spawner for gazebo
+  2. loads control configuration file (joint state controller and joint position controllers)
+  3. run controller spawner node and gives it the loaded control configuration file
+  3. robot state publisher, which publishes the joint states and transforms (TF)
+
+  Its purpose is simulation in a basic gazebo environment with position controllers started (motion planning is possible because robot state and controllers are launched)
+  We can make very basic motions with publishing joint values on the published controllers command topics
+-->
+
+
   <!-- Launch Gazebo  -->
   <include file="$(find rrr_arm)/launch/view_arm_gazebo_empty_world.launch" />   
 

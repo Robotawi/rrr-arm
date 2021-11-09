@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <launch>
+  <!-- This launch file starts
+  1. robot description
+  2. empty gazebo world
+  3. non-empty/constructed world
+  3. robot spawner for gazebo
+  4. set Robot pose options
+  5. set Gazebo simulator options 
+
+  Its purpose is simulation in a rich gazebo environment (no motion planning is possible because not robot state or joint state publishers are here)
+  It provides capability to spawn the robot in specific location as there is a world now. We do not want the robot to be spawned at the center of a table. If this happens, you will find either the table or robot flying due to problematics physics solutions. 
+-->
 
   <!-- Optional: World File (if not used, then the arg world_name in the next step should not be used) -->
   <!-- My world -->
@@ -45,4 +56,3 @@
               -R $(arg roll) -P $(arg pitch) -Y $(arg yaw)"/>
 
 </launch>
-

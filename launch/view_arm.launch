@@ -1,6 +1,12 @@
 <?xml version="1.0"?>
 <launch>
-
+  <!-- This launch file starts
+  1. robot description
+  2. joint state publisher
+  3. robot state publisher
+  4. rviz
+  Its purpose is visulaization in rviz
+-->
   <param name="robot_description" command="$(find xacro)/xacro --inorder $(find rrr_arm)/urdf/rrr_arm.xacro" />
 
   <node name="joint_state_publisher" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui"/>

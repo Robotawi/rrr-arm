@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <launch>
-
+  <!-- This launch file starts
+  1. robot description
+  2. empty world
+  3. robot spawner for gazebo
+  Its purpose is simulation in a very basic gazebo (no motion planning is possible because not robot state or joint state publishers are here)
+-->
   <!-- Launch empty Gazebo world (notice the world_name arg if the above world_file is loaded) -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch"> 
     <arg name="use_sim_time" value="true"/>
